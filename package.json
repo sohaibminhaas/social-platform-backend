@@ -2,11 +2,10 @@
   "name": "social-platform-backend",
   "version": "1.0.0",
   "description": "social platform backend",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npx tsc && node build/index.js",
-    "build": "npx tsc",
     "dev": "nodemon --files src/index.ts"
   },
   "author": "Sohaib Riaz",
