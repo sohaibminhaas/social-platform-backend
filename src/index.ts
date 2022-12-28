@@ -2,7 +2,7 @@ import express, { Application, Request, Response} from "express";
 const app: Application = express();
 import adminRoutes from "./routes/dashboard-routes";
 import webRoutes from "./routes/web-routes";
-import bodyparser = require("body-parser");
+import bodyparser from "body-parser";
 import dotenv from 'dotenv';
 dotenv.config();
 

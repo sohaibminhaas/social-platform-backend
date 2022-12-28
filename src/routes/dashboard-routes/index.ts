@@ -1,7 +1,12 @@
 import express, {Request, Response} from "express";
 const router = express.Router();
 import dahboardAuth from "../../middleware/dashboard-auth";
-import jwt from "jsonwebtoken";
+import rolesRoutes from "../dashboard-routes/roles";
+import { login } from "../../services/UserService";
+import { permissions } from "../../services/PermissionService";
+import ErrorLogger from "../../utils/error-handler";
+const { logger, logError } = new ErrorLogger();
+import Joi from "joi";
 
 export default module.exports = () => {
     router.get('/', (req: Request, res: Response) => {
@@ -11,48 +16,53 @@ export default module.exports = () => {
         });
     });
 
-    router.get('/login', (req: Request, res: Response) => {
+    router.post('/login', async (req: Request, res: Response) => {
         try {
-            // const body = Object.assign(req.body);
-            // if (!body) {
-            //     res.json({
-            //         status: false,
-            //         message: `failed`,
-            //         data: undefined
-            //     });
-            // }
-            const user = {
-                id: 1,
-                firstName: "Sohaib",
-                lastname: "Riaz",
-                email: "sohaib.minhas@outlook.com",
-                status: "ACTIVE",
-                token:  ''
-            }
-            const token = jwt.sign(
-                user,
-                process.env.DASHBOARD_AUTH_TOKEN_KEY!,
-                {
-                    expiresIn: "2h",
-                }
-            );
-            user.token = token;
-            res.json({
-                status: true,
-                message: `Success`,
-                data: user
+            const body = Object.assign(req.body);
+            const schema = Joi.object({
+                email: Joi.string().email().required(),
+                password: Joi.string().required()
             });
+
+            const validation = schema.validate({
+                email: body.email,
+                password: body.password,
+            });
+
+            if (validation.error) {
+                return res.status(400).json({
+                    status: false,
+                    statusMsg: "Data validation failed",
+                    data: validation.error,
+                });
+            }
+
+            const response = await login(body.email, body.password); 
+            return res.send(response);
         } catch (error) {
-            console.error("error in login", error);
+            logError("controller: error in login", error);
+            return res.status(500).json({
+                status: false,
+                statusMsg: "controller: error in login",
+                data: undefined,
+            });
         }
     });
 
-    router.get('/welcome', dahboardAuth, (req: Request, res: Response) => {
-        res.json({
-            status: true,
-            message: `Hello World!`
-        });
+    router.get('/permissions', dahboardAuth, async (req, res) => {
+        try {
+            const permissions_response = await permissions()
+            res.send(permissions_response);
+        } catch (error) {
+            logError("controller: error in getting permissions", error);
+            return res.status(500).json({
+                status: false,
+                statusMsg: "controller: error in getting permissions",
+                data: undefined,
+            });
+        }
     });
 
+    router.use(rolesRoutes());
     return router;
 }
