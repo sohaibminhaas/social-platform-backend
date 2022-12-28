@@ -5,8 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx tsc && node build/index.js",
-    "dev": "nodemon --files src/index.ts",
+    "start": "yarn db-types && npx tsc && node build/index.js",
+    "dev": "yarn db-types && nodemon --files src/index.ts",
     "db-types": "npx prisma generate",
     "db-push": "yarn db-types && npx prisma db push",
     "db-seed": "ts-node prisma/seed.ts"
