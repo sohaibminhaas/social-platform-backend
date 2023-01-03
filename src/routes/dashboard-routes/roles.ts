@@ -13,7 +13,7 @@ export default module.exports = () => {
             const role = Object.assign(req.body);
             const schema = Joi.object({
                 title: Joi.string().required(),
-                permissons: Joi.array().items(Joi.number()).min(1),
+                permissons: Joi.array().items(Joi.number()).min(1).required(),
                 status: Joi.string().valid(Status.ACTIVE, Status.INACTIVE),
             });
 

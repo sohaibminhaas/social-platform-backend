@@ -66,7 +66,9 @@ export async function roles(): Promise<Service_Response<any>> {
         try {
             const roles = await prismaClient.roles.findMany({
                 where: {
-                    status: Status.ACTIVE
+                    status: {
+                        in: [Status.ACTIVE, Status.INACTIVE]
+                    } 
                 },
                 orderBy: {
                     id: Prisma.SortOrder.desc

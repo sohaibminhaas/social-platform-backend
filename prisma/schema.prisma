@@ -13,7 +13,7 @@ model Admins{
   firstName         String
   lastName          String
   email             String                  @unique
-  password          String
+  password          String?
   phone_no          String
   img               String?
   admin_has_roles   Admin_Has_Roles[]
@@ -28,6 +28,7 @@ model Roles {
   title                 String
   status                Status          
   role_has_permissions  Role_Has_Permissions[]
+  admin_has_roles       Admin_Has_Roles[]
   created_at            DateTime          @default(now())
   updated_at            DateTime?         @updatedAt
 }
@@ -59,9 +60,27 @@ model Admin_Has_Roles {
   admin_id         Int
   admin            Admins                 @relation(fields: [admin_id], references: [id])
   role_id          Int
+  role             Roles                  @relation(fields: [role_id], references: [id])
   created_at       DateTime               @default(now())
   updated_at       DateTime?              @updatedAt
   @@index([admin_id])
+  @@index([role_id])
+}
+
+model TempSignIn {
+  id                  Int @id @default(autoincrement())
+  type                Type
+  type_id             Int
+  code                Int
+  is_validated        Boolean @default(false)
+  createdAt           DateTime
+  updatedAt           DateTime?     @updatedAt
+}
+
+enum Type {
+  ROOT
+  EMPLOYEE
+  USER
 }
 
 enum Status {

@@ -1,7 +1,8 @@
-import express, {Request, Response} from "express";
+import express, { Request, Response } from "express";
 const router = express.Router();
 import dahboardAuth from "../../middleware/dashboard-auth";
 import rolesRoutes from "../dashboard-routes/roles";
+import employeeRoutes from "../dashboard-routes/employee";
 import { login } from "../../services/UserService";
 import { permissions } from "../../services/PermissionService";
 import ErrorLogger from "../../utils/error-handler";
@@ -37,8 +38,7 @@ export default module.exports = () => {
                 });
             }
 
-            const response = await login(body.email, body.password); 
-            return res.send(response);
+            return res.send(await login(body.email, body.password));
         } catch (error) {
             logError("controller: error in login", error);
             return res.status(500).json({
@@ -64,5 +64,6 @@ export default module.exports = () => {
     });
 
     router.use(rolesRoutes());
+    router.use(employeeRoutes());
     return router;
 }
