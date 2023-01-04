@@ -7,7 +7,7 @@ import { Service_Response } from "../types/service-response";
 type Role = {
     id: number | undefined | null,
     title: string,
-    permissons: Array<number>
+    permissions: Array<number>
     status: Status
 }
 
@@ -29,7 +29,7 @@ export async function create(role: Role): Promise<Service_Response<any>> {
                     created_at: new Date().toISOString(),
                     role_has_permissions: {
                         createMany: {
-                            data: mapPermissions(role.permissons)
+                            data: mapPermissions(role.permissions)
                         }
                     }
                 },
@@ -177,7 +177,7 @@ export async function edit(role: Role): Promise<Service_Response<any>> {
                     status: role.status,
                     role_has_permissions: {
                         createMany: {
-                            data: mapPermissions(role.permissons)
+                            data: mapPermissions(role.permissions)
                         }
                     }
                 },
